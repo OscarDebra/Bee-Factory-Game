@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://deyffnjrttma5"]
-
-[ext_resource type="Script" uid="uid://bo2hwhio0k7ev" path="res://scripts/bee.gd" id="1_gl0u4"]
-
-[node name="Bee" type="Node2D"]
-script = ExtResource("1_gl0u4")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

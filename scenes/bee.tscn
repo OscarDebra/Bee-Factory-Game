@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=3 uid="uid://deyffnjrttma5"]
+
+[ext_resource type="Script" uid="uid://bo2hwhio0k7ev" path="res://scripts/bee.gd" id="1_gl0u4"]
+[ext_resource type="Texture2D" uid="uid://cg1onp1bdrgnp" path="res://assets/overlay_tilemap.png" id="2_cupo5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ko1vw"]
+atlas = ExtResource("2_cupo5")
+region = Rect2(0, 0, 16, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u10v1"]
+atlas = ExtResource("2_cupo5")
+region = Rect2(16, 0, 16, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fhhen"]
+atlas = ExtResource("2_cupo5")
+region = Rect2(32, 0, 16, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u3ceb"]
+atlas = ExtResource("2_cupo5")
+region = Rect2(0, 14, 16, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fafk"]
+atlas = ExtResource("2_cupo5")
+region = Rect2(16, 14, 16, 14)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_03cos"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ko1vw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u10v1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fhhen")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u3ceb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0fafk")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Bee" type="Node2D"]
+script = ExtResource("1_gl0u4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_03cos")
