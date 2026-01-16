@@ -14,11 +14,6 @@ const HEX_DIRS = [
 func _ready() -> void:
 	global_position = my_tilemap.map_to_local(HEX_DIRS[1])
 
-	print(TileMap)
 
-
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta) -> void:
 	pass
