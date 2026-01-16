@@ -29,3 +29,7 @@ tile_set = SubResource("TileSet_nxiqb")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("4_o6xl0")
+
+[node name="GlobalTickTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="GlobalTickTimer" to="." method="_on_tick_timer_timeout"]

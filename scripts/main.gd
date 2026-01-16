@@ -1,9 +1,12 @@
 extends Node
 
+signal global_tick
+
+@onready var global_tick_timer: Timer = $GlobalTickTimer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	global_tick_timer.start()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -18,3 +21,7 @@ func _input(event):
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 		else:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+
+func _on_tick_timer_timeout() -> void:
+	emit_signal("global_tick")
