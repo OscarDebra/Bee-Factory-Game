@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcsjfrf86udg1"
-path="res://.godot/imported/bier.png-dc0accf7068457526d0ca2bc85c2f813.ctex"
+uid="uid://d4atea0yr5we4"
+path="res://.godot/imported/toolbar_slot_background.png-348979b3f894f5d27cf8826758c4526c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/bier.png"
-dest_files=["res://.godot/imported/bier.png-dc0accf7068457526d0ca2bc85c2f813.ctex"]
+source_file="res://assets/toolbar_slot_background.png"
+dest_files=["res://.godot/imported/toolbar_slot_background.png-348979b3f894f5d27cf8826758c4526c.ctex"]
 
 [params]
 
