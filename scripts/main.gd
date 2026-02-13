@@ -11,7 +11,7 @@ var bee_scene = preload("res://scenes/bee.tscn")
 func _ready() -> void:
 	global_tick_timer.start()
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func _input(event):

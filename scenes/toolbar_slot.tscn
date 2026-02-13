@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c3hkeuv0sdj5q"]
 
-[ext_resource type="Texture2D" uid="uid://d4atea0yr5we4" path="res://assets/toolbar_slot_background.png" id="1_2vnqh"]
+[ext_resource type="Script" uid="uid://djtl75xrtny88" path="res://scenes/toolbar_slot.gd" id="1_2vnqh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2vnqh"]
 
@@ -9,11 +9,14 @@ custom_minimum_size = Vector2(240, 210)
 offset_right = 32.0
 offset_bottom = 28.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_2vnqh")
+script = ExtResource("1_2vnqh")
 
-[node name="background" type="TextureRect" parent="."]
+[node name="background" type="TextureButton" parent="."]
 texture_filter = 1
 layout_mode = 2
-texture = ExtResource("1_2vnqh")
 
 [node name="icon" type="TextureRect" parent="."]
 layout_mode = 2
+
+[connection signal="button_down" from="background" to="." method="_on_background_button_down"]
+[connection signal="pressed" from="background" to="." method="_on_background_pressed"]
