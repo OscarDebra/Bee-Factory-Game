@@ -1,47 +1,40 @@
-[gd_scene load_steps=9 format=3 uid="uid://deyffnjrttma5"]
+[gd_scene load_steps=8 format=3 uid="uid://deyffnjrttma5"]
 
 [ext_resource type="Script" uid="uid://bo2hwhio0k7ev" path="res://scripts/bee.gd" id="1_gl0u4"]
 [ext_resource type="Texture2D" uid="uid://cg1onp1bdrgnp" path="res://assets/overlay_tilemap.png" id="2_cupo5"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ko1vw"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_vie5o"]
 atlas = ExtResource("2_cupo5")
-region = Rect2(0, 0, 16, 14)
+region = Rect2(0, 0, 32, 28)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_u10v1"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogg2i"]
 atlas = ExtResource("2_cupo5")
-region = Rect2(16, 0, 16, 14)
+region = Rect2(0, 28, 32, 28)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fhhen"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_qf6nb"]
 atlas = ExtResource("2_cupo5")
-region = Rect2(32, 0, 16, 14)
+region = Rect2(32, 0, 32, 28)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_u3ceb"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_oynbf"]
 atlas = ExtResource("2_cupo5")
-region = Rect2(0, 14, 16, 14)
+region = Rect2(32, 28, 32, 28)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0fafk"]
-atlas = ExtResource("2_cupo5")
-region = Rect2(16, 14, 16, 14)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_03cos"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_nkr4b"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ko1vw")
+"texture": SubResource("AtlasTexture_vie5o")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_u10v1")
+"texture": SubResource("AtlasTexture_ogg2i")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fhhen")
+"texture": SubResource("AtlasTexture_qf6nb")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_u3ceb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0fafk")
+"texture": SubResource("AtlasTexture_oynbf")
 }],
-"loop": true,
+"loop": false,
 "name": &"default",
 "speed": 5.0
 }]
@@ -51,4 +44,4 @@ script = ExtResource("1_gl0u4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-sprite_frames = SubResource("SpriteFrames_03cos")
+sprite_frames = SubResource("SpriteFrames_nkr4b")
