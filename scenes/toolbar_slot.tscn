@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c3hkeuv0sdj5q"]
+[gd_scene load_steps=4 format=3 uid="uid://c3hkeuv0sdj5q"]
 
 [ext_resource type="Script" uid="uid://djtl75xrtny88" path="res://scenes/toolbar_slot.gd" id="1_2vnqh"]
+[ext_resource type="Texture2D" uid="uid://d4atea0yr5we4" path="res://assets/toolbar_slot_background.png" id="2_wtajo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2vnqh"]
 
@@ -13,7 +14,10 @@ script = ExtResource("1_2vnqh")
 
 [node name="background" type="TextureButton" parent="."]
 texture_filter = 1
+custom_minimum_size = Vector2(240, 210)
 layout_mode = 2
+texture_normal = ExtResource("2_wtajo")
+stretch_mode = 0
 
 [node name="icon" type="TextureRect" parent="."]
 layout_mode = 2

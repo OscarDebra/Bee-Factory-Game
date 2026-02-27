@@ -1,5 +1,6 @@
 extends Node
-signal global_tick
+signal global_move_tick
+signal global_rotate_tick
 @onready var global_tick_timer: Timer = $GlobalTickTimer
 @onready var tilemap: TileMapLayer = $TileMapLayer
 @onready var line_2d: Line2D = $Line2D
@@ -7,6 +8,7 @@ signal global_tick
 var placing_bee: bool = false
 var bee_path: Array[Vector2i] = []
 var bee_scene = preload("res://scenes/bee.tscn")
+var move_tick = true
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -37,8 +39,13 @@ func _input(event):
 		# Cancel placement
 		cancel_bee_placement()
 
-func _on_tick_timer_timeout() -> void:
-	emit_signal("global_tick")
+func _on_global_tick_timer_timeout() -> void:
+	if (move_tick):
+		emit_signal("global_move_tick")
+	else:
+		emit_signal("global_rotate_tick")
+	
+	move_tick = !move_tick
 
 func try_add_tile():
 	var tile = tilemap.local_to_map(tilemap.get_local_mouse_position())
@@ -68,7 +75,7 @@ func confirm_bee_placement():
 		cancel_bee_placement()
 		return
 	
-	# Convert absolute positions to relative path
+
 	var relative_path: Array[Vector2i] = []
 	for i in range(bee_path.size()):
 		var current = bee_path[i]

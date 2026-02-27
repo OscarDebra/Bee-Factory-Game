@@ -17,10 +17,7 @@ func _input(event):
 			KEY_3: select_slot(2)
 			KEY_4: select_slot(3)
 			KEY_5: select_slot(4)
-			KEY_6: select_slot(5)
-			KEY_7: select_slot(6)
-			KEY_8: select_slot(7)
-			KEY_9: select_slot(8)
+
 
 func select_slot(index: int):
 	selected_slot = index
