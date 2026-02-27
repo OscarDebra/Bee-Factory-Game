@@ -1,5 +1,8 @@
 extends Node2D
 @onready var my_tilemap = get_parent().get_node("TileMapLayer")
+@onready var bee_air_1 = $bee_air_1
+@onready var bee_air_2 = $bee_air_2
+
 var path : Array[Vector2i] = []  # Changed from const to var with type
 var move_tick := false
 var path_index := 0
@@ -18,6 +21,7 @@ var target_rotation := 0.0
 func _ready() -> void:
 	get_tree().get_root().get_node("main").global_move_tick.connect(_on_global_move_tick)
 	get_tree().get_root().get_node("main").global_rotate_tick.connect(_on_global_rotate_tick)
+	get_tree().get_root().get_node("main").global_animation_tick.connect(_on_global_animation_tick)
 	map_position = my_tilemap.local_to_map(global_position)
 
 func _process(delta) -> void:
@@ -67,3 +71,8 @@ func _on_global_rotate_tick():
 	is_rotating = true
 	rotation_progress = 0.0
 	move_tick = true
+
+func _on_global_animation_tick():
+	bee_air_1.visible = !bee_air_1.visible
+	bee_air_2.visible = !bee_air_2.visible
+	

@@ -1,6 +1,7 @@
 extends Node
 signal global_move_tick
 signal global_rotate_tick
+signal global_animation_tick
 @onready var global_tick_timer: Timer = $GlobalTickTimer
 @onready var tilemap: TileMapLayer = $TileMapLayer
 @onready var line_2d: Line2D = $Line2D
@@ -9,6 +10,7 @@ var placing_bee: bool = false
 var bee_path: Array[Vector2i] = []
 var bee_scene = preload("res://scenes/bee.tscn")
 var move_tick = true
+var active_tick = true
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -40,12 +42,16 @@ func _input(event):
 		cancel_bee_placement()
 
 func _on_global_tick_timer_timeout() -> void:
-	if (move_tick):
-		emit_signal("global_move_tick")
-	else:
-		emit_signal("global_rotate_tick")
-	
-	move_tick = !move_tick
+	if (active_tick):
+		if (move_tick):
+			emit_signal("global_move_tick")
+		else:
+			emit_signal("global_rotate_tick")
+		
+		move_tick = !move_tick
+		
+	active_tick = !active_tick
+	emit_signal("global_animation_tick")
 
 func try_add_tile():
 	var tile = tilemap.local_to_map(tilemap.get_local_mouse_position())

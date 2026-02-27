@@ -1,47 +1,26 @@
-[gd_scene load_steps=8 format=3 uid="uid://deyffnjrttma5"]
+[gd_scene load_steps=5 format=3 uid="uid://deyffnjrttma5"]
 
 [ext_resource type="Script" uid="uid://bo2hwhio0k7ev" path="res://scripts/bee.gd" id="1_gl0u4"]
-[ext_resource type="Texture2D" uid="uid://c8vc5r8bqvly0" path="res://assets/overlay_tilemap.png" id="2_cupo5"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vie5o"]
-atlas = ExtResource("2_cupo5")
-region = Rect2(0, 0, 32, 28)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ogg2i"]
-atlas = ExtResource("2_cupo5")
-region = Rect2(0, 28, 32, 28)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qf6nb"]
-atlas = ExtResource("2_cupo5")
-region = Rect2(32, 0, 32, 28)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oynbf"]
-atlas = ExtResource("2_cupo5")
-region = Rect2(32, 28, 32, 28)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_nkr4b"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vie5o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ogg2i")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qf6nb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_oynbf")
-}],
-"loop": false,
-"name": &"default",
-"speed": 5.0
-}]
+[ext_resource type="Texture2D" uid="uid://cck4o2d4ru3xh" path="res://assets/bee_landed.png" id="2_qf6nb"]
+[ext_resource type="Texture2D" uid="uid://ne2odl8n1chp" path="res://assets/bee_air_1.png" id="3_oynbf"]
+[ext_resource type="Texture2D" uid="uid://cpjc2hgvn0tdc" path="res://assets/bee_air_2.png" id="4_nkr4b"]
 
 [node name="Bee" type="Node2D"]
 script = ExtResource("1_gl0u4")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="bee_landed" type="Sprite2D" parent="."]
+visible = false
 texture_filter = 1
-sprite_frames = SubResource("SpriteFrames_nkr4b")
+rotation = 1.5707964
+texture = ExtResource("2_qf6nb")
+
+[node name="bee_air_1" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+rotation = 1.5707964
+texture = ExtResource("3_oynbf")
+
+[node name="bee_air_2" type="Sprite2D" parent="."]
+texture_filter = 1
+rotation = 1.5707964
+texture = ExtResource("4_nkr4b")

@@ -29,7 +29,7 @@ tile_set = SubResource("TileSet_nxiqb")
 script = ExtResource("4_o6xl0")
 
 [node name="GlobalTickTimer" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.25
 
 [node name="Line2D" type="Line2D" parent="."]
 
