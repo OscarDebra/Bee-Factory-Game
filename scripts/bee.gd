@@ -73,6 +73,7 @@ func _on_global_rotate_tick():
 	rotation_progress = 0.0
 	move_tick = true
 
+
 func _on_global_animation_tick():
 	bee_air_1.visible = !bee_air_1.visible
 	bee_air_2.visible = !bee_air_2.visible

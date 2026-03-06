@@ -2,7 +2,6 @@ extends Node
 signal global_move_tick
 signal global_rotate_tick
 signal global_animation_tick
-signal can_move
 
 @onready var global_tick_timer: Timer = $GlobalTickTimer
 @onready var tilemap: TileMapLayer = $TileMapLayer
@@ -166,16 +165,14 @@ func resolve_collisions():
 	# Then check for any pos with 2+ bees
 	for pos in seen:
 		if seen[pos].size() > 1:
-			losers = seen[pos].slice(1)  # everyone except index 0
-	
-	for id in bees:
-		if id not in losers:
-			bees[id].move()  # direct call, no signal needed
+			var ids = seen[pos].duplicate()
+			var winner = ids.pick_random()
+			ids.erase(winner)  # remove winner, everyone else is a loser
+			losers.append_array(ids)
+
 
 	for entry in bee_next_positions:
 		if entry["id"] not in losers:
-			var bee = instance_from_id(entry["id"])
-			if is_instance_valid(bee):
-				can_move.emit(bee)
+			bees[entry["id"]].move()
 
-	bee_next_positions = []
+	bee_next_positions.clear()
