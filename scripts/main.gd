@@ -10,7 +10,7 @@ var placing_bee: bool = false
 var bee_path: Array[Vector2i] = []
 var bee_scene = preload("res://scenes/bee.tscn")
 var move_tick = true
-var active_tick = true
+var tick_index = 0
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -42,15 +42,16 @@ func _input(event):
 		cancel_bee_placement()
 
 func _on_global_tick_timer_timeout() -> void:
-	if (active_tick):
+	if (tick_index == 3): # Move / rotate every 4 ticks
 		if (move_tick):
 			emit_signal("global_move_tick")
 		else:
 			emit_signal("global_rotate_tick")
 		
 		move_tick = !move_tick
-		
-	active_tick = !active_tick
+		tick_index = 0
+
+	tick_index += 1
 	emit_signal("global_animation_tick")
 
 func try_add_tile():
