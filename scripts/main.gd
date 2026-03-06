@@ -2,6 +2,8 @@ extends Node
 signal global_move_tick
 signal global_rotate_tick
 signal global_animation_tick
+signal can_move
+
 @onready var global_tick_timer: Timer = $GlobalTickTimer
 @onready var tilemap: TileMapLayer = $TileMapLayer
 @onready var line_2d: Line2D = $Line2D
@@ -11,6 +13,9 @@ var bee_path: Array[Vector2i] = []
 var bee_scene = preload("res://scenes/bee.tscn")
 var move_tick = true
 var tick_index = 0
+var bee_next_positions = []
+var bee_count: int = 0
+var bees = {}
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -43,11 +48,12 @@ func _input(event):
 
 func _on_global_tick_timer_timeout() -> void:
 	if (tick_index == 3): # Move / rotate every 4 ticks
+
 		if (move_tick):
 			emit_signal("global_move_tick")
 		else:
 			emit_signal("global_rotate_tick")
-		
+
 		move_tick = !move_tick
 		tick_index = 0
 
@@ -56,7 +62,6 @@ func _on_global_tick_timer_timeout() -> void:
 
 func try_add_tile():
 	var tile = tilemap.local_to_map(tilemap.get_local_mouse_position())
-	
 	
 	if bee_path.is_empty():
 		bee_path.append(tile)
@@ -91,6 +96,9 @@ func confirm_bee_placement():
 	
 	# Spawn the bee
 	var bee = bee_scene.instantiate()
+	bees[bee.get_instance_id()] = bee  # store the reference
+	bee.bee_next_pos.connect(_on_bee_next_pos)
+	bee_count += 1
 	add_child(bee)
 	
 	bee.global_position = tilemap.map_to_local(bee_path[0])
@@ -136,3 +144,38 @@ func is_neighbor(a: Vector2i, b: Vector2i) -> bool:
 		if a + neighbor == b:
 			return true
 	return false
+	
+func _on_bee_next_pos(id: int, next_pos: Vector2i):
+	bee_next_positions.append({"id": id, "next_pos": next_pos})
+	
+	if bee_next_positions.size() >= bee_count:
+		resolve_collisions()
+
+
+func resolve_collisions():
+	var seen = {}
+	var losers = []
+	
+	for entry in bee_next_positions:
+		var pos = entry["next_pos"]
+		
+		if pos not in seen:
+			seen[pos] = []
+		seen[pos].append(entry["id"])
+
+	# Then check for any pos with 2+ bees
+	for pos in seen:
+		if seen[pos].size() > 1:
+			losers = seen[pos].slice(1)  # everyone except index 0
+	
+	for id in bees:
+		if id not in losers:
+			bees[id].move()  # direct call, no signal needed
+
+	for entry in bee_next_positions:
+		if entry["id"] not in losers:
+			var bee = instance_from_id(entry["id"])
+			if is_instance_valid(bee):
+				can_move.emit(bee)
+
+	bee_next_positions = []
