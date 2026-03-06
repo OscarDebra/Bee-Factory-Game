@@ -1,7 +1,7 @@
 extends Node
 signal global_move_tick
 signal global_rotate_tick
-signal global_animation_tick
+signal global_animation_tick(frame_num: int)
 
 @onready var global_tick_timer: Timer = $GlobalTickTimer
 @onready var tilemap: TileMapLayer = $TileMapLayer
@@ -16,6 +16,7 @@ var bee_next_positions = []
 var bee_count: int = 0
 var bees = {}
 var incoming_bee = false
+var frame_num: int = 0
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -62,7 +63,15 @@ func _on_global_tick_timer_timeout() -> void:
 		tick_index = 0
 
 	tick_index += 1
-	emit_signal("global_animation_tick")
+
+
+	frame_num += 1
+	if frame_num > 1:
+		frame_num = 0
+
+	global_animation_tick.emit(frame_num)
+
+
 
 func try_add_tile():
 	var tile = tilemap.local_to_map(tilemap.get_local_mouse_position())
@@ -77,8 +86,12 @@ func try_add_tile():
 		bee_path.append(tile)
 		highlight(tile)
 
+
+
 func highlight(tile):
 	line_2d.add_point(tilemap.map_to_local(tile))
+
+
 
 func confirm_bee_placement():
 	if bee_path.size() < 3:
@@ -116,11 +129,15 @@ func confirm_bee_placement():
 	
 	print("Bee placed with cycle path!")
 
+
+
 func cancel_bee_placement():
 	placing_bee = false
 	bee_path.clear()
 	line_2d.clear_points()
 	print("Bee placement cancelled.")
+
+
 
 func is_neighbor(a: Vector2i, b: Vector2i) -> bool:
 	var neighbor_offsets_even = [
@@ -148,12 +165,15 @@ func is_neighbor(a: Vector2i, b: Vector2i) -> bool:
 		if a + neighbor == b:
 			return true
 	return false
-	
+
+
+
 func _on_bee_next_pos(id: int, next_pos: Vector2i):
 	bee_next_positions.append({"id": id, "next_pos": next_pos})
 	
 	if bee_next_positions.size() >= bee_count:
 		resolve_collisions()
+
 
 
 func resolve_collisions():

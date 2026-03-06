@@ -74,9 +74,13 @@ func _on_global_rotate_tick():
 	move_tick = true
 
 
-func _on_global_animation_tick():
-	bee_air_1.visible = !bee_air_1.visible
-	bee_air_2.visible = !bee_air_2.visible
+func _on_global_animation_tick(frame_num: int):
+	if frame_num == 0:
+		bee_air_1.visible = true
+		bee_air_2.visible = false
+	else:
+		bee_air_1.visible = false
+		bee_air_2.visible = true
 
 func move():
 	map_position += path[path_index]
