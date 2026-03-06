@@ -1,12 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://q0isfx6t4h0o"]
+[gd_scene load_steps=3 format=3 uid="uid://q0isfx6t4h0o"]
 
 [ext_resource type="PackedScene" uid="uid://c3hkeuv0sdj5q" path="res://scenes/toolbar_slot.tscn" id="1_i3mxx"]
+[ext_resource type="Script" uid="uid://su0fhvg1566m" path="res://scenes/toolbar.gd" id="1_wdy5x"]
 
 [node name="toolbar" type="HBoxContainer"]
 texture_filter = 1
 offset_right = 330.0
 offset_bottom = 140.0
 theme_override_constants/separation = 0
+script = ExtResource("1_wdy5x")
 
 [node name="toolbar_slot" parent="." instance=ExtResource("1_i3mxx")]
 layout_mode = 2
