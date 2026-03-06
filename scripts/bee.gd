@@ -32,7 +32,7 @@ func _ready() -> void:
 func _process(delta) -> void:
 	if is_rotating:
 		rotation_progress += delta / rotation_duration
-		
+
 		if rotation_progress >= 1.0:
 			rotation = target_rotation
 			start_rotation = target_rotation

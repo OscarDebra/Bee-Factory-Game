@@ -15,6 +15,7 @@ var tick_index = 0
 var bee_next_positions = []
 var bee_count: int = 0
 var bees = {}
+var incoming_bee = false
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -36,7 +37,7 @@ func _input(event):
 			bee_path.clear()
 			line_2d.clear_points()
 		else:
-			confirm_bee_placement()
+			incoming_bee = true
 	
 	if event.is_action_pressed("left_click") and placing_bee:
 		try_add_tile()
@@ -51,6 +52,10 @@ func _on_global_tick_timer_timeout() -> void:
 		if (move_tick):
 			emit_signal("global_move_tick")
 		else:
+			if incoming_bee:
+				confirm_bee_placement()
+				incoming_bee = false
+
 			emit_signal("global_rotate_tick")
 
 		move_tick = !move_tick
