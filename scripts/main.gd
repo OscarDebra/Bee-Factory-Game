@@ -12,11 +12,12 @@ var bee_path: Array[Vector2i] = []
 var bee_scene = preload("res://scenes/bee.tscn")
 var move_tick = true
 var tick_index = 0
-var bee_next_positions = []
+var bee_info = []
 var bee_count: int = 0
 var bees = {}
 var incoming_bee = false
 var frame_num: int = 0
+var stuck_bees: Array = []
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -64,12 +65,7 @@ func _on_global_tick_timer_timeout() -> void:
 
 	tick_index += 1
 
-
-	frame_num += 1
-	if frame_num > 1:
-		frame_num = 0
-
-	global_animation_tick.emit(frame_num)
+	signal_bee_wing_flap()
 
 
 
@@ -113,10 +109,10 @@ func confirm_bee_placement():
 	
 	# Spawn the bee
 	var bee = bee_scene.instantiate()
-	bees[bee.get_instance_id()] = bee  # store the reference
 	bee.bee_next_pos.connect(_on_bee_next_pos)
 	bee_count += 1
 	add_child(bee)
+	bees[bee.get_instance_id()] = bee
 	
 	bee.global_position = tilemap.map_to_local(bee_path[0])
 	bee.map_position = bee_path[0]
@@ -168,10 +164,14 @@ func is_neighbor(a: Vector2i, b: Vector2i) -> bool:
 
 
 
-func _on_bee_next_pos(id: int, next_pos: Vector2i):
-	bee_next_positions.append({"id": id, "next_pos": next_pos})
+func _on_bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i):
+	print("received bee_next_pos: ", id, current_pos, next_pos)
+
+	bee_info.append({"id": id, "current_pos": current_pos, "next_pos": next_pos})
 	
-	if bee_next_positions.size() >= bee_count:
+	if bee_info.size() >= bee_count:
+		print("bee_info: ", bee_info)
+		print("bees keys: ", bees.keys())
 		resolve_collisions()
 
 
@@ -180,24 +180,63 @@ func resolve_collisions():
 	var seen = {}
 	var losers = []
 	
-	for entry in bee_next_positions:
+	# Head-on collision, stuck bees
+	var pos_map = {}
+	for entry in bee_info:
+		pos_map[entry["current_pos"]] = entry
+	
+	for entry in bee_info:
+		if entry["next_pos"] in pos_map:
+			var other = pos_map[entry["next_pos"]]
+			if other["next_pos"] == entry["current_pos"]:
+				if entry["id"] not in stuck_bees:
+					stuck_bees.append(entry["id"])
+				if other["id"] not in stuck_bees:
+					stuck_bees.append(other["id"])
+	
+	# Any bee walking into a stuck bee also gets stuck
+	var changed = true
+	while changed:
+		changed = false
+		for entry in bee_info:
+			if entry["id"] in stuck_bees:
+				continue
+			for other in bee_info:
+				if other["id"] in stuck_bees and entry["next_pos"] == other["current_pos"]:
+					stuck_bees.append(entry["id"])
+					changed = true
+					break
+	
+	# Build seen, skipping stuck bees
+	for entry in bee_info:
+		if entry["id"] in stuck_bees:
+			continue
+
 		var pos = entry["next_pos"]
-		
 		if pos not in seen:
 			seen[pos] = []
 		seen[pos].append(entry["id"])
-
-	# Then check for any pos with 2+ bees
+	
+	# Check for 2+ bees targeting same tile
 	for pos in seen:
 		if seen[pos].size() > 1:
 			var ids = seen[pos].duplicate()
 			var winner = ids.pick_random()
-			ids.erase(winner)  # remove winner, everyone else is a loser
+			ids.erase(winner)
 			losers.append_array(ids)
-
-
-	for entry in bee_next_positions:
-		if entry["id"] not in losers:
+	
+	# Move bees that are neither stuck nor losers
+	for entry in bee_info:
+		if entry["id"] not in stuck_bees and entry["id"] not in losers:
 			bees[entry["id"]].move()
+	
+	bee_info.clear()
 
-	bee_next_positions.clear()
+
+
+func signal_bee_wing_flap():
+	frame_num += 1
+	if frame_num > 1:
+		frame_num = 0
+
+	global_animation_tick.emit(frame_num)

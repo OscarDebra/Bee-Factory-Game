@@ -1,6 +1,6 @@
 extends Node2D
 
-signal bee_next_pos(id: int, next_pos: Vector2i)
+signal bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i)
 
 @onready var my_tilemap = get_parent().get_node("TileMapLayer")
 @onready var bee_air_1 = $bee_air_1
@@ -9,7 +9,7 @@ signal bee_next_pos(id: int, next_pos: Vector2i)
 var path : Array[Vector2i] = []  # Changed from const to var with type
 var move_tick := false
 var path_index := 0
-var map_position := Vector2i(0, 0)
+var map_position: Vector2i
 
 var is_moving : bool = false
 var move_progress := 0.0
@@ -23,11 +23,15 @@ var rotation_duration := 0.2
 var start_rotation := 0.0
 var target_rotation := 0.0
 
+
+
 func _ready() -> void:
 	get_tree().get_root().get_node("main").global_move_tick.connect(_on_global_move_tick)
 	get_tree().get_root().get_node("main").global_rotate_tick.connect(_on_global_rotate_tick)
 	get_tree().get_root().get_node("main").global_animation_tick.connect(_on_global_animation_tick)
 	map_position = my_tilemap.local_to_map(global_position)
+
+
 
 func _process(delta) -> void:
 	if is_rotating:
@@ -53,12 +57,14 @@ func _process(delta) -> void:
 			global_position = start_position.lerp(target_position, move_progress)
 
 
+
 func _on_global_move_tick():
 	if path_index == path.size():
 		path_index = 0
 
-	target_position = my_tilemap.map_to_local(map_position + path[path_index])
-	bee_next_pos.emit(get_instance_id(), target_position) # Sending this to main, main evaluates what bee takes priority if paths overlap.
+	var next_map_pos = map_position + path[path_index]
+	bee_next_pos.emit(get_instance_id(), map_position, next_map_pos)
+
 
 
 func _on_global_rotate_tick():
@@ -74,6 +80,7 @@ func _on_global_rotate_tick():
 	move_tick = true
 
 
+
 func _on_global_animation_tick(frame_num: int):
 	if frame_num == 0:
 		bee_air_1.visible = true
@@ -81,6 +88,8 @@ func _on_global_animation_tick(frame_num: int):
 	else:
 		bee_air_1.visible = false
 		bee_air_2.visible = true
+
+
 
 func move():
 	map_position += path[path_index]
