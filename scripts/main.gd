@@ -18,6 +18,7 @@ var bees = {}
 var incoming_bee = false
 var frame_num: int = 0
 var stuck_bees: Array = []
+var occupied_positions: Array = []
 
 func _ready() -> void:
 	global_tick_timer.start()
@@ -99,6 +100,11 @@ func confirm_bee_placement():
 		print("Path must form a cycle! Last tile must be adjacent to first tile.")
 		cancel_bee_placement()
 		return
+		
+	if bee_path[0] in occupied_positions:
+		print("Bee is overlapping spawn position")
+		cancel_bee_placement()
+		return
 	
 
 	var relative_path: Array[Vector2i] = []
@@ -113,6 +119,7 @@ func confirm_bee_placement():
 	bee_count += 1
 	add_child(bee)
 	bees[bee.get_instance_id()] = bee
+	occupied_positions.append(bee_path[0])
 	
 	bee.global_position = tilemap.map_to_local(bee_path[0])
 	bee.map_position = bee_path[0]
@@ -165,13 +172,9 @@ func is_neighbor(a: Vector2i, b: Vector2i) -> bool:
 
 
 func _on_bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i):
-	print("received bee_next_pos: ", id, current_pos, next_pos)
-
 	bee_info.append({"id": id, "current_pos": current_pos, "next_pos": next_pos})
 	
 	if bee_info.size() >= bee_count:
-		print("bee_info: ", bee_info)
-		print("bees keys: ", bees.keys())
 		resolve_collisions()
 
 
@@ -179,7 +182,7 @@ func _on_bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i):
 func resolve_collisions():
 	var seen = {}
 	var losers = []
-	
+
 	# Head-on collision, stuck bees
 	var pos_map = {}
 	for entry in bee_info:
@@ -229,6 +232,8 @@ func resolve_collisions():
 	for entry in bee_info:
 		if entry["id"] not in stuck_bees and entry["id"] not in losers:
 			bees[entry["id"]].move()
+			occupied_positions.erase(entry["current_pos"])
+			occupied_positions.append(entry["next_pos"])
 	
 	bee_info.clear()
 
