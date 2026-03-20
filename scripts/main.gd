@@ -105,7 +105,7 @@ func confirm_bee_placement():
 		print("Bee is overlapping spawn position")
 		cancel_bee_placement()
 		return
-	
+
 
 	var relative_path: Array[Vector2i] = []
 	for i in range(bee_path.size()):

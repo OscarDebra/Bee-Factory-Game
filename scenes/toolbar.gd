@@ -21,5 +21,15 @@ func _input(event):
 
 func select_slot(index: int):
 	selected_slot = index
-	for i in slots.size():
-		slots[i].set_selected(i == index)
+	
+	match selected_slot:
+		0:
+			get_tree().root.get_child(0).placing_bee = true
+		1:
+			pass
+		2:
+			pass
+		3:
+			pass
+		4:
+			pass
