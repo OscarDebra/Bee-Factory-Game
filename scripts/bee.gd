@@ -1,6 +1,7 @@
-extends Node2D
+extends Area2D
 
 signal bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i)
+signal bee_removed(id: int, pos: Vector2i)
 
 @onready var my_tilemap = get_parent().get_node("TileMapLayer")
 @onready var bee_air_1 = $bee_air_1
@@ -23,6 +24,7 @@ var rotation_duration := 0.2
 var start_rotation := 0.0
 var target_rotation := 0.0
 
+var is_hovered := false
 
 
 func _ready() -> void:
@@ -30,10 +32,28 @@ func _ready() -> void:
 	get_tree().get_root().get_node("main").global_rotate_tick.connect(_on_global_rotate_tick)
 	get_tree().get_root().get_node("main").global_animation_tick.connect(_on_global_animation_tick)
 	map_position = my_tilemap.local_to_map(global_position)
+	
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
 
 
+func _on_mouse_entered():
+	is_hovered = true
+
+
+func _on_mouse_exited():
+	is_hovered = false
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.double_click and is_hovered:
+				bee_removed.emit(get_instance_id(), map_position)
+				queue_free()
+				get_viewport().set_input_as_handled()
 
 func _process(delta) -> void:
+
 	if is_rotating:
 		rotation_progress += delta / rotation_duration
 

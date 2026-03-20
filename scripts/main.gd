@@ -116,6 +116,7 @@ func confirm_bee_placement():
 	# Spawn the bee
 	var bee = bee_scene.instantiate()
 	bee.bee_next_pos.connect(_on_bee_next_pos)
+	bee.bee_removed.connect(_on_bee_removed)
 	bee_count += 1
 	add_child(bee)
 	bees[bee.get_instance_id()] = bee
@@ -178,12 +179,10 @@ func _on_bee_next_pos(id: int, current_pos: Vector2i, next_pos: Vector2i):
 		resolve_collisions()
 
 
-
 func resolve_collisions():
-	var seen = {}
 	var losers = []
-
-	# Head-on collision, stuck bees
+	
+	# Head-on collisions
 	var pos_map = {}
 	for entry in bee_info:
 		pos_map[entry["current_pos"]] = entry
@@ -192,51 +191,67 @@ func resolve_collisions():
 		if entry["next_pos"] in pos_map:
 			var other = pos_map[entry["next_pos"]]
 			if other["next_pos"] == entry["current_pos"]:
-				if entry["id"] not in stuck_bees:
-					stuck_bees.append(entry["id"])
-				if other["id"] not in stuck_bees:
-					stuck_bees.append(other["id"])
+				if entry["id"] not in losers:
+					losers.append(entry["id"])
+				if other["id"] not in losers:
+					losers.append(other["id"])
 	
-	# Any bee walking into a stuck bee also gets stuck
-	var changed = true
-	while changed:
-		changed = false
+	# Iteratively resolve until stable
+	var prev_loser_count = -1
+	while prev_loser_count != losers.size():
+		prev_loser_count = losers.size()
+		
+		# Build seen from non-losers only
+		var seen = {}
 		for entry in bee_info:
-			if entry["id"] in stuck_bees:
+			if entry["id"] in losers:
+				continue
+			var pos = entry["next_pos"]
+			if pos not in seen:
+				seen[pos] = []
+			seen[pos].append(entry["id"])
+		
+		# 2+ bees targeting same tile — pick winner that can actually move
+		for pos in seen:
+			if seen[pos].size() > 1:
+				var ids = seen[pos].duplicate()
+				# Find candidates that aren't blocked themselves
+				var free_candidates = ids.filter(func(id):
+					var e = bee_info.filter(func(x): return x["id"] == id)[0]
+					# A bee is free if its next_pos is not the current_pos of a loser
+					for other in bee_info:
+						if other["id"] in losers and e["next_pos"] == other["current_pos"]:
+							return false
+					return true
+				)
+				# Pick winner from free candidates if any, otherwise just pick random
+				var winner
+				if free_candidates.size() > 0:
+					winner = free_candidates.pick_random()
+				else:
+					winner = ids.pick_random()
+				ids.erase(winner)
+				for id in ids:
+					if id not in losers:
+						losers.append(id)
+
+		# Bee walking into a loser's current tile becomes a loser
+		for entry in bee_info:
+			if entry["id"] in losers:
 				continue
 			for other in bee_info:
-				if other["id"] in stuck_bees and entry["next_pos"] == other["current_pos"]:
-					stuck_bees.append(entry["id"])
-					changed = true
+				if other["id"] in losers and entry["next_pos"] == other["current_pos"]:
+					if entry["id"] not in losers:
+						losers.append(entry["id"])
 					break
 	
-	# Build seen, skipping stuck bees
 	for entry in bee_info:
-		if entry["id"] in stuck_bees:
-			continue
-
-		var pos = entry["next_pos"]
-		if pos not in seen:
-			seen[pos] = []
-		seen[pos].append(entry["id"])
-	
-	# Check for 2+ bees targeting same tile
-	for pos in seen:
-		if seen[pos].size() > 1:
-			var ids = seen[pos].duplicate()
-			var winner = ids.pick_random()
-			ids.erase(winner)
-			losers.append_array(ids)
-	
-	# Move bees that are neither stuck nor losers
-	for entry in bee_info:
-		if entry["id"] not in stuck_bees and entry["id"] not in losers:
+		if entry["id"] not in losers:
 			bees[entry["id"]].move()
 			occupied_positions.erase(entry["current_pos"])
 			occupied_positions.append(entry["next_pos"])
 	
 	bee_info.clear()
-
 
 
 func signal_bee_wing_flap():
@@ -245,3 +260,11 @@ func signal_bee_wing_flap():
 		frame_num = 0
 
 	global_animation_tick.emit(frame_num)
+
+
+func _on_bee_removed(id: int, pos: Vector2i) -> void:
+	bees.erase(id)
+	occupied_positions.erase(pos)
+	bee_count -= 1
+	# Remove any pending bee_info entries for this bee
+	bee_info = bee_info.filter(func(e): return e["id"] != id)

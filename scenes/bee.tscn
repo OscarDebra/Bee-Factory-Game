@@ -1,11 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://deyffnjrttma5"]
+[gd_scene load_steps=6 format=3 uid="uid://deyffnjrttma5"]
 
 [ext_resource type="Script" uid="uid://bo2hwhio0k7ev" path="res://scripts/bee.gd" id="1_gl0u4"]
 [ext_resource type="Texture2D" uid="uid://cck4o2d4ru3xh" path="res://assets/bee_landed.png" id="2_qf6nb"]
 [ext_resource type="Texture2D" uid="uid://ne2odl8n1chp" path="res://assets/bee_air_1.png" id="3_oynbf"]
 [ext_resource type="Texture2D" uid="uid://cpjc2hgvn0tdc" path="res://assets/bee_air_2.png" id="4_nkr4b"]
 
-[node name="Bee" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oynbf"]
+
+[node name="Bee" type="Area2D"]
 script = ExtResource("1_gl0u4")
 
 [node name="bee_landed" type="Sprite2D" parent="."]
@@ -24,3 +26,6 @@ texture = ExtResource("3_oynbf")
 texture_filter = 1
 rotation = 1.5707964
 texture = ExtResource("4_nkr4b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_oynbf")
